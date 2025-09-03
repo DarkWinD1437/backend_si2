@@ -1,0 +1,66 @@
+openapi: 3.0.3
+info:
+  title: Cooperativa Agrícola API
+  description: API para la gestión de una cooperativa agrícola
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+    description: Servidor de desarrollo
+
+components:
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+paths:
+  /api/usuarios/:
+    get:
+      summary: Lista todos los usuarios
+      security:
+        - Bearer: []
+    post:
+      summary: Crea un nuevo usuario
+      security:
+        - Bearer: []
+
+  /api/productos/:
+    get:
+      summary: Lista todos los productos
+      security:
+        - Bearer: []
+    post:
+      summary: Crea un nuevo producto
+      security:
+        - Bearer: []
+
+  /api/inventario/:
+    get:
+      summary: Lista todos los movimientos de inventario
+      security:
+        - Bearer: []
+    post:
+      summary: Registra un nuevo movimiento de inventario
+      security:
+        - Bearer: []
+
+  /api/socios/:
+    get:
+      summary: Lista todos los socios
+      security:
+        - Bearer: []
+    post:
+      summary: Registra un nuevo socio
+      security:
+        - Bearer: []
+
+  /api/socios/aportes/:
+    get:
+      summary: Lista todos los aportes
+      security:
+        - Bearer: []
+    post:
+      summary: Registra un nuevo aporte
+      security:
+        - Bearer: []
