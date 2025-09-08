@@ -18,7 +18,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenRefreshView
+from apps.auditoria.authentication import CustomTokenObtainPairView
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularRedocView,
@@ -30,12 +31,13 @@ urlpatterns = [
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/usuarios/', include('apps.usuarios.urls')),
     path('api/productos/', include('apps.productos.urls')),
     path('api/inventario/', include('apps.inventario.urls')),
     path('api/socios/', include('apps.socios.urls')),
+    path('api/auditoria/', include('apps.auditoria.urls')),
 ]
 
 if settings.DEBUG:
