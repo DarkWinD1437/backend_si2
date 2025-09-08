@@ -1,7 +1,9 @@
 # models.py
 from django.db import models
 from django.core.validators import RegexValidator
+from django.core.exceptions import ValidationError
 from apps.usuarios.models import User
+from apps.usuarios.document_models import DocumentoIdentidad, TipoDocumento
 
 class Socio(models.Model):
     TIPO_SOCIO_CHOICES = [
@@ -11,10 +13,6 @@ class Socio(models.Model):
     ]
 
     # Validadores
-    dni_validator = RegexValidator(
-        regex=r'^\d{8,15}$',
-        message='El DNI debe contener solo números (8-15 dígitos)'
-    )
     telefono_validator = RegexValidator(
         regex=r'^\d{7,15}$',
         message='El teléfono debe contener solo números (7-15 dígitos)'
@@ -22,12 +20,17 @@ class Socio(models.Model):
 
     usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name='socio_perfil')
     tipo_socio = models.CharField(max_length=20, choices=TIPO_SOCIO_CHOICES)
+    
+    # Reemplazamos el campo DNI por una referencia al documento
+    # Mantenemos compatibilidad temporal con el campo dni
     dni = models.CharField(
         max_length=20, 
         unique=True,
-        validators=[dni_validator],
-        help_text='DNI del socio (solo números)'
+        null=True,
+        blank=True,
+        help_text='DEPRECATED: Usar documento_identidad en su lugar'
     )
+    
     direccion = models.TextField(max_length=500)
     telefono = models.CharField(
         max_length=15,
@@ -52,6 +55,38 @@ class Socio(models.Model):
             models.Index(fields=['tipo_socio'], name='socio_tipo_idx'),
         ]
 
+    def clean(self):
+        """Validaciones personalizadas"""
+        super().clean()
+        
+        # Validar que el usuario asociado tenga documento de identidad
+        if self.usuario and not self.usuario.documento_identidad:
+            raise ValidationError({
+                'usuario': 'El usuario debe tener un documento de identidad asociado'
+            })
+        
+        # Validar que no haya duplicados de documento entre socios activos
+        if self.usuario and self.usuario.documento_identidad and self.activo:
+            documento = self.usuario.documento_identidad
+            
+            # Buscar otros socios activos con el mismo documento
+            socios_con_mismo_doc = Socio.objects.filter(
+                usuario__documento_identidad__tipo_documento=documento.tipo_documento,
+                usuario__documento_identidad__numero_documento=documento.numero_documento,
+                usuario__documento_identidad__extension=documento.extension,
+                activo=True
+            ).exclude(pk=self.pk)
+            
+            if socios_con_mismo_doc.exists():
+                raise ValidationError({
+                    'usuario': f'Ya existe un socio activo con el documento '
+                             f'{documento.get_tipo_documento_display()}: {documento.documento_completo}'
+                })
+    
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.usuario.get_full_name()} - {self.get_tipo_socio_display()}"
 
@@ -63,6 +98,20 @@ class Socio(models.Model):
     
     def esta_activo(self):
         return self.activo
+    
+    @property
+    def documento_numero(self):
+        """Retorna el número de documento del usuario"""
+        if self.usuario and self.usuario.documento_identidad:
+            return self.usuario.documento_identidad.documento_completo
+        return self.dni  # Fallback al campo legacy
+    
+    @property
+    def tipo_documento(self):
+        """Retorna el tipo de documento del usuario"""
+        if self.usuario and self.usuario.documento_identidad:
+            return self.usuario.documento_identidad.get_tipo_documento_display()
+        return 'CI/DNI'  # Fallback para datos legacy
 
 class Aporte(models.Model):
     TIPO_APORTE_CHOICES = [

@@ -1,0 +1,29 @@
+INFO 2025-09-08 16:07:30,454 autoreload 30456 32644 Watching for file changes with StatReloader
+INFO 2025-09-08 16:09:49,838 basehttp 30456 24488 "GET /admin/auditoria/auditorialog/ HTTP/1.1" 302 0
+INFO 2025-09-08 16:09:50,423 basehttp 30456 24488 "GET /admin/login/?next=/admin/auditoria/auditorialog/ HTTP/1.1" 200 4269
+INFO 2025-09-08 16:10:03,227 basehttp 30456 24488 "POST /admin/login/?next=/admin/auditoria/auditorialog/ HTTP/1.1" 302 0
+INFO 2025-09-08 16:10:03,710 basehttp 30456 24488 "GET /admin/auditoria/auditorialog/ HTTP/1.1" 200 17168
+INFO 2025-09-08 16:10:04,060 basehttp 30456 24488 "GET /admin/jsi18n/ HTTP/1.1" 200 8691
+INFO 2025-09-08 16:10:04,383 basehttp 30456 16664 - Broken pipe from ('127.0.0.1', 54789)
+INFO 2025-09-08 16:10:04,433 basehttp 30456 5968 - Broken pipe from ('127.0.0.1', 54788)
+INFO 2025-09-08 16:10:04,493 basehttp 30456 25124 - Broken pipe from ('127.0.0.1', 54791)
+INFO 2025-09-08 16:10:04,505 basehttp 30456 31404 - Broken pipe from ('127.0.0.1', 54790)
+WARNING 2025-09-08 16:10:05,577 log 30456 24488 Not Found: /favicon.ico
+INFO 2025-09-08 16:10:05,600 basehttp 30456 24488 - Broken pipe from ('127.0.0.1', 54786)
+INFO 2025-09-08 16:10:08,960 basehttp 30456 27284 "GET /admin/auth/user/ HTTP/1.1" 200 12629
+INFO 2025-09-08 16:10:09,227 basehttp 30456 27284 "GET /admin/jsi18n/ HTTP/1.1" 200 8691
+INFO 2025-09-08 16:10:11,373 basehttp 30456 27284 "GET /admin/socios/socio/ HTTP/1.1" 200 14964
+INFO 2025-09-08 16:10:11,722 basehttp 30456 27284 "GET /admin/jsi18n/ HTTP/1.1" 200 8691
+INFO 2025-09-08 16:10:11,724 basehttp 30456 27832 "GET /static/admin/css/forms.css HTTP/1.1" 304 0
+INFO 2025-09-08 16:10:11,826 basehttp 30456 27284 "GET /static/admin/css/widgets.css HTTP/1.1" 304 0
+INFO 2025-09-08 16:10:13,884 basehttp 30456 27284 "GET /admin/socios/aporte/ HTTP/1.1" 200 11117
+INFO 2025-09-08 16:10:14,092 basehttp 30456 27284 "GET /admin/jsi18n/ HTTP/1.1" 200 8691
+INFO 2025-09-08 16:10:16,688 basehttp 30456 27284 "GET /admin/auditoria/auditorialog/ HTTP/1.1" 200 17168
+INFO 2025-09-08 16:10:16,956 basehttp 30456 27284 "GET /admin/jsi18n/ HTTP/1.1" 200 8691
+WARNING 2025-09-08 16:10:17,205 log 30456 27284 Not Found: /favicon.ico
+INFO 2025-09-08 16:10:17,214 basehttp 30456 27284 - Broken pipe from ('127.0.0.1', 54794)
+INFO 2025-09-08 16:12:04,612 autoreload 30744 25568 Watching for file changes with StatReloader
+INFO 2025-09-08 16:12:11,969 basehttp 30744 30244 "GET /admin/auditoria/auditorialog/ HTTP/1.1" 200 18745
+INFO 2025-09-08 16:12:12,222 basehttp 30744 30244 "GET /admin/jsi18n/ HTTP/1.1" 200 8691
+INFO 2025-09-08 16:12:18,215 basehttp 30744 30244 "GET /api/swagger/ HTTP/1.1" 200 4658
+INFO 2025-09-08 16:12:20,661 basehttp 30744 30244 "GET /api/schema/ HTTP/1.1" 200 124331

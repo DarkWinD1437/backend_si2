@@ -82,12 +82,31 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# Configuración para PostgreSQL
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': env('DATABASE_ENGINE', default='django.db.backends.postgresql'),
+        'NAME': env('DATABASE_NAME', default='cooperativa_db'),
+        'USER': env('DATABASE_USER', default='postgres'),
+        'PASSWORD': env('DATABASE_PASSWORD', default='123456'),
+        'HOST': env('DATABASE_HOST', default='localhost'),
+        'PORT': env('DATABASE_PORT', default='5432'),
+        'CONN_MAX_AGE': env.int('DATABASE_CONN_MAX_AGE', default=300),
+        'ATOMIC_REQUESTS': env.bool('DATABASE_ATOMIC_REQUESTS', default=True),
+        'OPTIONS': {
+            'client_encoding': 'UTF8',
+        },
     }
 }
+
+# Configuración alternativa para desarrollo con SQLite
+# Descomenta las siguientes líneas si prefieres usar SQLite para desarrollo
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 
 # Password validation
@@ -146,8 +165,13 @@ SPECTACULAR_SETTINGS = {
 }
 
 # CORS settings
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = env.bool('CORS_ALLOW_ALL_ORIGINS', default=True)
 CORS_ALLOW_CREDENTIALS = False
+
+CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+])
 
 CORS_ALLOW_METHODS = [
     'DELETE',
@@ -188,3 +212,76 @@ SIMPLE_JWT = {
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'TOKEN_TYPE_CLAIM': 'token_type',
 }
+
+# Configuración de Auditoría
+AUDITORIA_ENABLED = env.bool('AUDITORIA_ENABLED', default=True)
+AUDITORIA_LOG_ANONYMOUS = env.bool('AUDITORIA_LOG_ANONYMOUS', default=False)
+AUDITORIA_LOG_API_CALLS = env.bool('AUDITORIA_LOG_API_CALLS', default=True)
+
+# Configuración de Validaciones
+VALIDACION_DUPLICADOS_ENABLED = env.bool('VALIDACION_DUPLICADOS_ENABLED', default=True)
+VALIDACION_DOCUMENTOS_STRICT = env.bool('VALIDACION_DOCUMENTOS_STRICT', default=True)
+
+# Configuración de Logging para PostgreSQL
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+        'sql': {
+            'format': 'SQL: {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'logs' / 'django.log',
+            'formatter': 'verbose',
+        },
+        'sql_file': {
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'logs' / 'sql.log',
+            'formatter': 'sql',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file'],
+            'level': env('LOG_LEVEL', default='INFO'),
+            'propagate': True,
+        },
+        'django.db.backends': {
+            'handlers': ['sql_file'] if env.bool('LOG_SQL_QUERIES', default=False) else [],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'apps.auditoria': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'apps.usuarios': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
+
+# Crear directorio de logs si no existe
+import os
+logs_dir = BASE_DIR / 'logs'
+if not os.path.exists(logs_dir):
+    os.makedirs(logs_dir)
